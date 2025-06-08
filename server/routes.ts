@@ -112,7 +112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/behavioral/sessions', isAuthenticated, async (req: any, res) => {
+  app.get('/api/behavioral/sessions', demoAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const sessions = await storage.getUserActiveSessions(userId);
@@ -123,7 +123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/behavioral/metric', isAuthenticated, async (req: any, res) => {
+  app.post('/api/behavioral/metric', demoAuth, async (req: any, res) => {
     try {
       const metricData = insertBehavioralMetricSchema.parse(req.body);
       const metric = await storage.createBehavioralMetric(metricData);
@@ -134,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/behavioral/metrics/:sessionId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/behavioral/metrics/:sessionId', demoAuth, async (req: any, res) => {
     try {
       const sessionId = parseInt(req.params.sessionId);
       const metrics = await storage.getSessionMetrics(sessionId);
@@ -146,7 +146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Anomaly detection and risk scoring
-  app.post('/api/behavioral/analyze', isAuthenticated, async (req: any, res) => {
+  app.post('/api/behavioral/analyze', demoAuth, async (req: any, res) => {
     try {
       const { featureVector, sessionId } = req.body;
       
@@ -189,7 +189,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Security events
-  app.post('/api/security/event', isAuthenticated, async (req: any, res) => {
+  app.post('/api/security/event', demoAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const eventData = insertSecurityEventSchema.parse({
@@ -205,7 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/security/events', isAuthenticated, async (req: any, res) => {
+  app.get('/api/security/events', demoAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const limit = parseInt(req.query.limit as string) || 10;
@@ -218,7 +218,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Banking routes
-  app.get('/api/accounts', isAuthenticated, async (req: any, res) => {
+  app.get('/api/accounts', demoAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       let accounts = await storage.getUserAccounts(userId);
@@ -241,7 +241,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/accounts/:id/transactions', isAuthenticated, async (req: any, res) => {
+  app.get('/api/accounts/:id/transactions', demoAuth, async (req: any, res) => {
     try {
       const accountId = parseInt(req.params.id);
       const limit = parseInt(req.query.limit as string) || 10;
@@ -287,7 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/transfer', isAuthenticated, async (req: any, res) => {
+  app.post('/api/transfer', demoAuth, async (req: any, res) => {
     try {
       const { fromAccountId, toAccount, amount, description } = req.body;
       
@@ -308,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Analytics dashboard
-  app.get('/api/analytics/dashboard', isAuthenticated, async (req: any, res) => {
+  app.get('/api/analytics/dashboard', demoAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const events = await storage.getUserSecurityEvents(userId, 100);

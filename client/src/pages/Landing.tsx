@@ -1,8 +1,50 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Landing() {
-  const handleLogin = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    username: 'demo',
+    password: 'password123'
+  });
+  const { toast } = useToast();
+
+  const handleDemoLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await apiRequest('POST', '/api/demo/login', formData);
+      const result = await response.json();
+
+      if (result.success) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome to SecureBank!",
+        });
+        
+        // Invalidate user query to refetch
+        queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+        
+        // Reload the page to trigger auth state change
+        window.location.reload();
+      }
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: "Please check your credentials and try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReplitLogin = () => {
     window.location.href = '/api/login';
   };
 
@@ -24,12 +66,49 @@ export default function Landing() {
           <p className="text-gray-600">Sign in to access your secure banking</p>
         </div>
 
-        <Button 
-          onClick={handleLogin}
-          className="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-        >
-          Sign In with Replit
-        </Button>
+        <form onSubmit={handleDemoLogin} className="space-y-4">
+          <div>
+            <Input
+              type="text"
+              placeholder="Username"
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <Input
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full"
+            />
+          </div>
+          <Button 
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            {isLoading ? 'Signing In...' : 'Sign In'}
+          </Button>
+        </form>
+
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600 mb-2">Demo Credentials:</p>
+          <p className="text-xs text-gray-500">Username: demo</p>
+          <p className="text-xs text-gray-500">Password: password123</p>
+        </div>
+
+        <div className="mt-6 text-center">
+          <Button 
+            variant="outline"
+            onClick={handleReplitLogin}
+            className="w-full"
+          >
+            Or Sign In with Replit
+          </Button>
+        </div>
 
         {/* Security Notice */}
         <Card className="mt-8 bg-blue-50">

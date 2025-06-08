@@ -102,7 +102,7 @@ export function BehavioralProvider({ children }: BehavioralProviderProps) {
     }, 15000); // Analyze every 15 seconds
 
     return () => clearInterval(analysisInterval);
-  }, [isMonitoring, isSessionActive, extractFeatures, analyzeCurrentBehavior, sessionId, createSecurityEventMutation]);
+  }, [isMonitoring, isSessionActive, sessionId]); // Removed function dependencies to prevent infinite loops
 
   const securityStatus = isAnomalous ? 'critical' : currentRiskScore > 0.6 ? 'warning' : 'secure';
 

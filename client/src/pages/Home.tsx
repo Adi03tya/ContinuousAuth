@@ -27,9 +27,10 @@ export default function Home() {
 
   // Start behavioral monitoring on mount
   useEffect(() => {
-    const cleanup = startSession();
-    return cleanup;
-  }, [startSession]);
+    // Temporarily disable to fix infinite loop
+    // const cleanup = startSession();
+    // return cleanup;
+  }, []);
 
   // Show risk alert when anomaly detected
   useEffect(() => {
