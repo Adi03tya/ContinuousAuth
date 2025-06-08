@@ -10,14 +10,67 @@ import {
   insertTransactionSchema 
 } from "@shared/schema";
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+// Simple authentication middleware for demo
+const demoAuth = (req: any, res: any, next: any) => {
+  if (req.session?.user) {
+    req.user = { claims: { sub: req.session.user.id } };
+    return next();
+  }
+  return res.status(401).json({ message: "Unauthorized" });
+};
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Auth middleware - try Replit auth first, fallback to demo
+  try {
+    await setupAuth(app);
+  } catch (error) {
+    console.log("Replit auth not available, using demo auth");
+  }
+
+  // Demo login route for testing
+  app.post('/api/demo/login', async (req, res) => {
+    const { username, password } = req.body;
+    
+    // Simple demo credentials
+    if (username === 'demo' && password === 'password123') {
+      const demoUser = await storage.upsertUser({
+        id: 'demo-user-123',
+        email: 'demo@securebank.com',
+        firstName: 'Demo',
+        lastName: 'User',
+        profileImageUrl: null
+      });
+      
+      (req.session as any).user = { id: demoUser.id };
+      res.json({ success: true, user: demoUser });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
+  });
+
+  app.post('/api/demo/logout', (req, res) => {
+    req.session?.destroy(() => {
+      res.json({ success: true });
+    });
+  });
+
+  // Auth routes - try both auth methods
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      let userId;
+      
+      // Try Replit auth first
+      if (req.isAuthenticated && req.isAuthenticated() && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+      }
+      // Fallback to demo auth
+      else if (req.session?.user?.id) {
+        userId = req.session.user.id;
+      }
+      else {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
       const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -30,7 +83,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Behavioral monitoring routes
-  app.post('/api/behavioral/session', isAuthenticated, async (req: any, res) => {
+  app.post('/api/behavioral/session', demoAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const sessionData = insertBehavioralSessionSchema.parse({
@@ -46,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/behavioral/session/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/behavioral/session/:id', demoAuth, async (req: any, res) => {
     try {
       const sessionId = parseInt(req.params.id);
       const updates = req.body;

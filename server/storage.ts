@@ -19,7 +19,7 @@ import {
   type InsertTransaction,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, isNull } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (required for Replit Auth)
@@ -103,7 +103,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(behavioralSessions.userId, userId),
-          eq(behavioralSessions.sessionEnd, null)
+          isNull(behavioralSessions.sessionEnd)
         )
       )
       .orderBy(desc(behavioralSessions.sessionStart));
