@@ -31,13 +31,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/demo/login', async (req, res) => {
     const { username, password } = req.body;
     
-    // Simple demo credentials
-    if (username === 'demo' && password === 'password123') {
+    // Demo user accounts
+    const demoAccounts = {
+      'demo': { password: 'password123', firstName: 'Demo', lastName: 'User' },
+      'john': { password: 'john123', firstName: 'John', lastName: 'Doe' },
+      'jane': { password: 'jane123', firstName: 'Jane', lastName: 'Smith' },
+      'admin': { password: 'admin123', firstName: 'Admin', lastName: 'User' }
+    };
+    
+    const account = demoAccounts[username as keyof typeof demoAccounts];
+    
+    if (account && account.password === password) {
       const demoUser = await storage.upsertUser({
-        id: 'demo-user-123',
-        email: 'demo@securebank.com',
-        firstName: 'Demo',
-        lastName: 'User',
+        id: `demo-user-${username}`,
+        email: `${username}@securebank.com`,
+        firstName: account.firstName,
+        lastName: account.lastName,
         profileImageUrl: null
       });
       
@@ -52,6 +61,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     req.session?.destroy(() => {
       res.json({ success: true });
     });
+  });
+
+  // Demo user route for authentication check
+  app.get('/api/demo/user', async (req, res) => {
+    const sessionUser = (req.session as any)?.user;
+    if (!sessionUser) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(sessionUser.id);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
   });
 
   // Auth routes - try both auth methods

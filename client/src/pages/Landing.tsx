@@ -48,6 +48,10 @@ export default function Landing() {
     window.location.href = '/api/login';
   };
 
+  const selectDemoAccount = (username: string, password: string) => {
+    setFormData({ username, password });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary to-blue-800">
       {/* Header */}
@@ -94,10 +98,39 @@ export default function Landing() {
           </Button>
         </form>
 
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600 mb-2">Demo Credentials:</p>
-          <p className="text-xs text-gray-500">Username: demo</p>
-          <p className="text-xs text-gray-500">Password: password123</p>
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+          <p className="text-sm font-medium text-gray-700 mb-1">Available Demo Accounts:</p>
+          <p className="text-xs text-gray-600 mb-3">Click any card to auto-fill login form</p>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div 
+              className="bg-white p-2 rounded border cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => selectDemoAccount('demo', 'password123')}
+            >
+              <p className="font-medium text-gray-900">demo / password123</p>
+              <p className="text-gray-600">Demo User</p>
+            </div>
+            <div 
+              className="bg-white p-2 rounded border cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => selectDemoAccount('john', 'john123')}
+            >
+              <p className="font-medium text-gray-900">john / john123</p>
+              <p className="text-gray-600">John Doe</p>
+            </div>
+            <div 
+              className="bg-white p-2 rounded border cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => selectDemoAccount('jane', 'jane123')}
+            >
+              <p className="font-medium text-gray-900">jane / jane123</p>
+              <p className="text-gray-600">Jane Smith</p>
+            </div>
+            <div 
+              className="bg-white p-2 rounded border cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => selectDemoAccount('admin', 'admin123')}
+            >
+              <p className="font-medium text-gray-900">admin / admin123</p>
+              <p className="text-gray-600">Admin User</p>
+            </div>
+          </div>
         </div>
 
         <div className="mt-6 text-center">
