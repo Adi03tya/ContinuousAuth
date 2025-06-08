@@ -1,0 +1,269 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(142, 76%, 36%);
+  --accent-foreground: hsl(60, 9.1%, 97.8%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Banking theme colors */
+  --bank-primary: hsl(207, 90%, 54%);
+  --bank-secondary: hsl(210, 40%, 2%);
+  --bank-accent: hsl(142, 76%, 36%);
+  --bank-warning: hsl(45, 93%, 47%);
+  --bank-danger: hsl(0, 84%, 60%);
+  --bank-secure: hsl(142, 76%, 36%);
+  --bank-risk: hsl(45, 93%, 47%);
+  --bank-critical: hsl(0, 84%, 60%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(142, 76%, 36%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Mobile-first banking design */
+  html {
+    font-size: 16px;
+  }
+
+  /* Ensure proper mobile viewport handling */
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}
+
+@layer components {
+  /* Banking-specific component styles */
+  .banking-gradient {
+    background: linear-gradient(135deg, hsl(var(--bank-primary)) 0%, hsl(207, 90%, 45%) 100%);
+  }
+
+  .security-indicator {
+    @apply flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .security-indicator.secure {
+    @apply bg-green-100 text-green-700;
+  }
+
+  .security-indicator.warning {
+    @apply bg-yellow-100 text-yellow-700;
+  }
+
+  .security-indicator.critical {
+    @apply bg-red-100 text-red-700;
+  }
+
+  .balance-card {
+    @apply bg-gradient-to-r from-primary to-blue-700 text-white rounded-2xl p-6;
+  }
+
+  .quick-action-card {
+    @apply bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer;
+  }
+
+  .transaction-item {
+    @apply bg-white rounded-xl p-4 shadow-sm border border-gray-100;
+  }
+
+  /* Behavioral monitoring animations */
+  .monitoring-pulse {
+    animation: monitoring-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes monitoring-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  /* Mobile-optimized touch targets */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Focus states for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+}
+
+@layer utilities {
+  /* Banking theme utilities */
+  .text-bank-primary {
+    color: hsl(var(--bank-primary));
+  }
+
+  .bg-bank-primary {
+    background-color: hsl(var(--bank-primary));
+  }
+
+  .text-bank-secure {
+    color: hsl(var(--bank-secure));
+  }
+
+  .bg-bank-secure {
+    background-color: hsl(var(--bank-secure));
+  }
+
+  .text-bank-warning {
+    color: hsl(var(--bank-warning));
+  }
+
+  .bg-bank-warning {
+    background-color: hsl(var(--bank-warning));
+  }
+
+  .text-bank-critical {
+    color: hsl(var(--bank-critical));
+  }
+
+  .bg-bank-critical {
+    background-color: hsl(var(--bank-critical));
+  }
+
+  /* Animation utilities */
+  .animate-monitoring {
+    animation: monitoring 1.5s ease-in-out infinite;
+  }
+
+  @keyframes monitoring {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+  }
+
+  /* Mobile-specific utilities */
+  .mobile-container {
+    @apply max-w-sm mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden;
+  }
+
+  .mobile-safe-area {
+    @apply pt-safe pb-safe;
+  }
+
+  /* Behavioral monitoring specific styles */
+  .risk-meter {
+    @apply relative w-full h-2 bg-gray-200 rounded-full overflow-hidden;
+  }
+
+  .risk-meter-fill {
+    @apply h-full transition-all duration-500 ease-out;
+  }
+
+  .risk-low {
+    @apply bg-green-500;
+  }
+
+  .risk-medium {
+    @apply bg-yellow-500;
+  }
+
+  .risk-high {
+    @apply bg-red-500;
+  }
+}
+
+/* Font loading optimization */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+}
+
+/* Ensure icons are loaded */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* Custom focus styles for better accessibility */
+*:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Improve touch responsiveness on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:shadow-md:hover {
+    box-shadow: none;
+  }
+  
+  .quick-action-card:active {
+    @apply shadow-lg transform scale-95;
+    transition: all 0.1s ease-in-out;
+  }
+}
