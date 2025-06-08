@@ -1,7 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { Link } from 'wouter';
 
 export default function DemoHome() {
+  const { user } = useAuth();
+
   const handleDemoLogout = async () => {
     try {
       await fetch('/api/demo/logout', { method: 'POST' });
@@ -22,7 +26,9 @@ export default function DemoHome() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Good morning,</p>
-              <p className="font-semibold text-gray-900">Demo User</p>
+              <p className="font-semibold text-gray-900">
+                {user ? `${user.firstName} ${user.lastName}` : 'Loading...'}
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -92,15 +98,17 @@ export default function DemoHome() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
-            <CardContent className="p-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
-                <i className="fas fa-user text-orange-600"></i>
-              </div>
-              <h4 className="font-medium text-gray-900 mb-1">My Profile</h4>
-              <p className="text-sm text-gray-500">Account settings</p>
-            </CardContent>
-          </Card>
+          <Link href="/profile">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-4">
+                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
+                  <i className="fas fa-user text-orange-600"></i>
+                </div>
+                <h4 className="font-medium text-gray-900 mb-1">My Profile</h4>
+                <p className="text-sm text-gray-500">Account settings</p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
 
