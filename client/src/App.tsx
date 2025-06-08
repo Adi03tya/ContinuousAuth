@@ -10,6 +10,7 @@ import Landing from "@/pages/Landing";
 import DemoHome from "@/pages/DemoHome";
 import Profile from "@/pages/Profile";
 import ReAuth from "@/pages/ReAuth";
+import BehavioralDashboard from "@/pages/BehavioralDashboard";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -23,6 +24,7 @@ function Router() {
           <Route path="/" component={DemoHome} />
           <Route path="/profile" component={Profile} />
           <Route path="/reauth" component={ReAuth} />
+          <Route path="/behavioral-dashboard" component={BehavioralDashboard} />
         </>
       )}
       <Route component={NotFound} />

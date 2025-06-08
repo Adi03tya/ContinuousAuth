@@ -36,8 +36,15 @@ export default function DemoHome() {
               <div className="w-2 h-2 rounded-full mr-1 bg-green-500"></div>
               <span className="text-xs font-medium">Secure</span>
             </div>
+            <Link href="/behavioral-dashboard">
+              <Button variant="outline" size="sm">
+                <i className="fas fa-chart-line mr-2"></i>
+                Patterns
+              </Button>
+            </Link>
             <Button variant="ghost" size="sm" onClick={handleDemoLogout}>
-              <i className="fas fa-sign-out-alt"></i>
+              <i className="fas fa-sign-out-alt mr-1"></i>
+              Logout
             </Button>
           </div>
         </div>
