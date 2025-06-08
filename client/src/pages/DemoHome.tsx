@@ -1,61 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
-import { useBehavioralContext } from '@/contexts/BehavioralContext';
-import { SecurityMonitor } from '@/components/SecurityMonitor';
-import { RiskAlert } from '@/components/RiskAlert';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useLocation } from 'wouter';
-import { useEffect, useState } from 'react';
 
-export default function Home() {
-  const { user } = useAuth();
-  const { startSession, isAnomalous, securityStatus } = useBehavioralContext();
-  const [, setLocation] = useLocation();
-  const [showRiskAlert, setShowRiskAlert] = useState(false);
-
-  // Fetch user accounts
-  const { data: accounts } = useQuery({
-    queryKey: ['/api/accounts'],
-  });
-
-  // Fetch recent transactions
-  const { data: transactions } = useQuery({
-    queryKey: ['/api/accounts', primaryAccount?.id, 'transactions'],
-    enabled: !!primaryAccount?.id,
-  });
-
-  // Start behavioral monitoring on mount
-  useEffect(() => {
-    // Temporarily disable to fix infinite loop
-    // const cleanup = startSession();
-    // return cleanup;
-  }, []);
-
-  // Show risk alert when anomaly detected
-  useEffect(() => {
-    if (isAnomalous) {
-      setShowRiskAlert(true);
-    }
-  }, [isAnomalous]);
-
-  const handleLogout = () => {
-    window.location.href = '/api/logout';
-  };
-
-  const primaryAccount = accounts && accounts.length > 0 ? accounts[0] : null;
-  const recentTransactions = transactions && Array.isArray(transactions) ? transactions.slice(0, 3) : [];
-
-  const getSecurityStatusColor = () => {
-    switch (securityStatus) {
-      case 'secure':
-        return 'bg-green-100 text-green-700';
-      case 'warning':
-        return 'bg-yellow-100 text-yellow-700';
-      case 'critical':
-        return 'bg-red-100 text-red-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
+export default function DemoHome() {
+  const handleDemoLogout = async () => {
+    try {
+      await fetch('/api/demo/logout', { method: 'POST' });
+      window.location.reload();
+    } catch (error) {
+      console.error('Logout failed:', error);
     }
   };
 
@@ -66,29 +18,19 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-3">
-              {user?.profileImageUrl ? (
-                <img 
-                  src={user.profileImageUrl} 
-                  alt="Profile" 
-                  className="w-10 h-10 rounded-full object-cover" 
-                />
-              ) : (
-                <i className="fas fa-user text-white"></i>
-              )}
+              <i className="fas fa-user text-white"></i>
             </div>
             <div>
               <p className="text-sm text-gray-600">Good morning,</p>
-              <p className="font-semibold text-gray-900">{user?.firstName || 'User'}</p>
+              <p className="font-semibold text-gray-900">Demo User</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <div className={`flex items-center px-2 py-1 rounded-full ${getSecurityStatusColor()}`}>
-              <div className={`w-2 h-2 rounded-full mr-1 ${securityStatus === 'secure' ? 'bg-green-500' : securityStatus === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
-              <span className="text-xs font-medium">
-                {securityStatus === 'secure' ? 'Secure' : securityStatus === 'warning' ? 'Monitoring' : 'Alert'}
-              </span>
+            <div className="flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700">
+              <div className="w-2 h-2 rounded-full mr-1 bg-green-500"></div>
+              <span className="text-xs font-medium">Secure</span>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <Button variant="ghost" size="sm" onClick={handleDemoLogout}>
               <i className="fas fa-sign-out-alt"></i>
             </Button>
           </div>
@@ -102,9 +44,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-blue-100 text-sm">Total Balance</p>
-                <p className="text-3xl font-bold">
-                  ${primaryAccount?.balance?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '0.00'}
-                </p>
+                <p className="text-3xl font-bold">$12,459.30</p>
               </div>
               <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                 <i className="fas fa-credit-card text-white"></i>
@@ -112,7 +52,7 @@ export default function Home() {
             </div>
             <div className="flex items-center text-sm text-blue-100">
               <i className="fas fa-eye mr-2"></i>
-              <span>{primaryAccount?.accountNumber || '****0000'}</span>
+              <span>****3421</span>
             </div>
           </CardContent>
         </Card>
@@ -152,10 +92,7 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card 
-            className="hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => setLocation('/profile')}
-          >
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
             <CardContent className="p-4">
               <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
                 <i className="fas fa-user text-orange-600"></i>
@@ -172,7 +109,7 @@ export default function Home() {
         <Card className="bg-blue-50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-medium text-gray-900">Security Monitoring</h4>
+              <h4 className="font-medium text-gray-900">Behavioral Authentication</h4>
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
                 <span className="text-sm text-green-600 font-medium">Active</span>
@@ -209,49 +146,69 @@ export default function Home() {
         </div>
         
         <div className="space-y-3">
-          {recentTransactions.map((transaction, index) => (
-            <Card key={transaction.id || index}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                      transaction.type === 'credit' ? 'bg-green-100' : 'bg-red-100'
-                    }`}>
-                      <i className={`fas ${
-                        transaction.type === 'credit' ? 'fa-plus text-green-600' : 
-                        transaction.category === 'food' ? 'fa-coffee text-red-600' :
-                        transaction.category === 'shopping' ? 'fa-shopping-cart text-red-600' :
-                        'fa-minus text-red-600'
-                      }`}></i>
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{transaction.description}</p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(transaction.createdAt || '').toLocaleDateString()}
-                      </p>
-                    </div>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3 bg-green-100">
+                    <i className="fas fa-plus text-green-600"></i>
                   </div>
-                  <p className={`font-semibold ${
-                    transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {transaction.type === 'credit' ? '+' : '-'}${transaction.amount.toFixed(2)}
-                  </p>
+                  <div>
+                    <p className="font-medium text-gray-900">Salary Deposit</p>
+                    <p className="text-sm text-gray-500">Today</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+                <p className="font-semibold text-green-600">+$3,200.00</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3 bg-red-100">
+                    <i className="fas fa-shopping-cart text-red-600"></i>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Amazon Purchase</p>
+                    <p className="text-sm text-gray-500">Yesterday</p>
+                  </div>
+                </div>
+                <p className="font-semibold text-red-600">-$89.99</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3 bg-red-100">
+                    <i className="fas fa-coffee text-red-600"></i>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Starbucks</p>
+                    <p className="text-sm text-gray-500">2 days ago</p>
+                  </div>
+                </div>
+                <p className="font-semibold text-red-600">-$5.67</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
       {/* Security Monitor */}
-      <SecurityMonitor />
-
-      {/* Risk Alert */}
-      <RiskAlert
-        isOpen={showRiskAlert}
-        onClose={() => setShowRiskAlert(false)}
-        onReauth={() => setShowRiskAlert(false)}
-      />
+      <div className="fixed bottom-4 right-4 bg-white rounded-full p-3 shadow-lg border border-gray-200 z-50">
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+          <div className="flex items-center">
+            <i className="fas fa-shield-alt text-sm mr-1 text-green-700"></i>
+            <span className="text-xs font-medium text-gray-700">Secure</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

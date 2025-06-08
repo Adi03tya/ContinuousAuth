@@ -7,7 +7,7 @@ import { BehavioralProvider } from "@/contexts/BehavioralContext";
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
-import Home from "@/pages/Home";
+import DemoHome from "@/pages/DemoHome";
 import Profile from "@/pages/Profile";
 import ReAuth from "@/pages/ReAuth";
 
@@ -20,7 +20,7 @@ function Router() {
         <Route path="/" component={Landing} />
       ) : (
         <>
-          <Route path="/" component={Home} />
+          <Route path="/" component={DemoHome} />
           <Route path="/profile" component={Profile} />
           <Route path="/reauth" component={ReAuth} />
         </>
