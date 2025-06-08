@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'wouter';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { BehavioralTracker } from '@/components/BehavioralTracker';
+import { SecurityMonitor } from '@/components/SecurityMonitor';
 import { useQuery } from '@tanstack/react-query';
 
 export default function BehavioralDashboard() {
@@ -113,6 +114,9 @@ export default function BehavioralDashboard() {
       </div>
 
       <div className="p-6 space-y-6">
+        {/* Real-time Security Monitoring */}
+        <SecurityMonitor />
+
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>

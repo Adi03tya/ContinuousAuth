@@ -298,14 +298,15 @@ export function BehavioralTracker() {
       clearInterval(analysisInterval);
       // Send final session data
       if (sessionId.current) {
-        const sessionDuration = Date.now() - sessionStart.current;
-        apiRequest('PATCH', `/api/behavioral/session/${sessionId.current}`, {
-          sessionEnd: new Date().toISOString(),
-          finalMetrics: {
-            duration: sessionDuration,
-            totalEvents: mouseBuffer.current.length + keystrokeBuffer.current.length + touchBuffer.current.length
-          }
-        });
+        try {
+          apiRequest('PATCH', `/api/behavioral/session/${sessionId.current}`, {
+            sessionEnd: new Date().toISOString()
+          }).catch(() => {
+            // Silently handle cleanup errors since user is leaving
+          });
+        } catch (error) {
+          // Silently handle cleanup errors since user is leaving
+        }
       }
     };
   }, []);

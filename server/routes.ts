@@ -132,7 +132,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionId = parseInt(req.params.id);
       const updates = req.body;
       
-      const session = await storage.updateBehavioralSession(sessionId, updates);
+      // Filter valid updates for the database schema
+      const validUpdates: any = {};
+      if (updates.sessionEnd) {
+        validUpdates.sessionEnd = new Date(updates.sessionEnd);
+      }
+      if (updates.riskScore !== undefined) {
+        validUpdates.riskScore = updates.riskScore;
+      }
+      if (updates.anomalyDetected !== undefined) {
+        validUpdates.anomalyDetected = updates.anomalyDetected;
+      }
+      if (updates.featureVector) {
+        validUpdates.featureVector = updates.featureVector;
+      }
+      
+      // Skip update if no valid fields provided
+      if (Object.keys(validUpdates).length === 0) {
+        return res.json({ message: "No valid updates provided" });
+      }
+      
+      const session = await storage.updateBehavioralSession(sessionId, validUpdates);
       res.json(session);
     } catch (error) {
       console.error("Error updating behavioral session:", error);
