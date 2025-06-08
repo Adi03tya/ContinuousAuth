@@ -216,6 +216,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Behavioral profile endpoint
+  app.get('/api/behavioral/profile', demoAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const sessions = await storage.getUserActiveSessions(userId);
+      const allMetrics = [];
+      
+      for (const session of sessions) {
+        const metrics = await storage.getSessionMetrics(session.id);
+        allMetrics.push(...metrics);
+      }
+
+      if (allMetrics.length === 0) {
+        // Return default profile for new users
+        return res.json({
+          mouseVelocityMean: 1.0,
+          mouseVelocityStd: 0.3,
+          dwellTimeMean: 150,
+          dwellTimeStd: 50,
+          flightTimeMean: 100,
+          flightTimeStd: 30,
+          touchPressureMean: 0.5,
+          touchPressureStd: 0.2
+        });
+      }
+
+      // Calculate statistical profile from historical data
+      const mouseVelocities = [];
+      const dwellTimes = [];
+      const flightTimes = [];
+      const touchPressures = [];
+
+      for (const metric of allMetrics) {
+        if (metric.data?.featureVector) {
+          const [velocity, dwell, flight, pressure] = metric.data.featureVector;
+          if (velocity) mouseVelocities.push(velocity);
+          if (dwell) dwellTimes.push(dwell);
+          if (flight) flightTimes.push(flight);
+          if (pressure) touchPressures.push(pressure);
+        }
+      }
+
+      const calculateStats = (values: number[]) => {
+        if (values.length === 0) return { mean: 0, std: 1 };
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+        const std = Math.sqrt(variance) || 1;
+        return { mean, std };
+      };
+
+      const mouseStats = calculateStats(mouseVelocities);
+      const dwellStats = calculateStats(dwellTimes);
+      const flightStats = calculateStats(flightTimes);
+      const pressureStats = calculateStats(touchPressures);
+
+      res.json({
+        mouseVelocityMean: mouseStats.mean,
+        mouseVelocityStd: mouseStats.std,
+        dwellTimeMean: dwellStats.mean,
+        dwellTimeStd: dwellStats.std,
+        flightTimeMean: flightStats.mean,
+        flightTimeStd: flightStats.std,
+        touchPressureMean: pressureStats.mean,
+        touchPressureStd: pressureStats.std
+      });
+    } catch (error) {
+      console.error("Error fetching behavioral profile:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
   // Security events
   app.post('/api/security/event', demoAuth, async (req: any, res) => {
     try {
