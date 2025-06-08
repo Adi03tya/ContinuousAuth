@@ -1,0 +1,71 @@
+Create a React Native mobile app (TypeScript-based) for continuous, behavior-based authentication tailored for mobile banking security. The app should include:
+
+📱 1. User Behavioral Data Capture
+Touch dynamics: capture typing speed, tap pressure, swipe gestures using react-native-gesture-handler.
+
+Motion sensors: collect accelerometer and gyroscope data via @react-native-community/sensors.
+
+Geolocation: with user permission (react-native-geolocation-service).
+
+🧠 2. Behavioral Feature Preprocessing
+Extract relevant metrics (e.g., dwell time, latency between keystrokes, accelerometer variance).
+
+Normalize data and format it as a flat feature vector.
+
+Store user behavior data locally using react-native-mmkv and optionally sync with Firebase Firestore.
+
+🛡️ 3. Initial Authentication
+Use Firebase Authentication (email/password or biometric with expo-local-authentication).
+
+After login, continuously monitor behavioral data in the background.
+
+🤖 4. TensorFlow Lite Model Integration
+Include a dummy TFLite model that accepts an array of behavioral features and outputs an anomaly score (0 = normal, 1 = anomaly).
+
+Use react-native-tflite or tflite-react-native to load and run inference.
+
+Trigger a risk flag if anomaly score > threshold (e.g., 0.8).
+
+🔁 5. Adaptive Response to Anomalies
+On suspicious behavior:
+
+Show a re-authentication screen (PIN or OTP).
+
+Limit access to sensitive actions (e.g., hide Transfer button).
+
+Log incident to Firebase Firestore.
+
+📊 6. Analytics and Logging
+Log behavioral session data and inference results in Firestore under /userSessions/{uid}.
+
+Include timestamp, feature vector, and model output.
+
+Use Firebase Analytics to track:
+
+Successful authentications
+
+Anomaly triggers
+
+Re-verification attempts
+
+🔒 7. Security, Privacy, and Optimization
+Encrypt data at rest using react-native-mmkv and device keychain.
+
+Ask for permissions clearly (geolocation, sensors).
+
+Optimize for low battery usage and smooth UX.
+
+💡 UI/UX Requirements
+Minimal, accessible design with banking theme
+
+Home screen: options like “Check Balance”, “Transfer Money”, “My Profile”
+
+Background monitoring without interrupting the user
+
+✅ Bonus
+Use React Context or Redux for app-wide state management
+
+Modular code structure with clear separation of concerns
+
+Include mock/dummy TFLite model and hardcoded inference output if needed
+
