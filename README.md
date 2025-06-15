@@ -134,10 +134,10 @@ Server runs at `http://localhost:3000` by default.
 
 ## 👤 Authors
 
-Aditya Gupta
-Deepanshu Rai
-Amandeep Singh Rayat
-Aashish Vishwakarma
+Aditya Gupta,
+Deepanshu Rai,
+Amandeep Singh Rayat,
+Aashish Vishwakarma,
 Deepanshu Chourasia 
 
 ---
