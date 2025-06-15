@@ -1,3 +1,4 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -249,8 +250,6 @@
 }
 
 /* Ensure icons are loaded */
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-
 /* Custom focus styles for better accessibility */
 *:focus-visible {
   @apply outline-none ring-2 ring-primary ring-offset-2;
